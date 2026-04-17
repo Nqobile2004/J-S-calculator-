@@ -1,60 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>JS Calculator</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>JS Calculator</title>
+
+<style>
+  body {
+    background: #1e1e2f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial;
+  }
+
+  .calculator {
+    background: #2c2f48;
+    padding: 20px;
+    border-radius: 15px;
+    width: 260px;
+  }
+
+  #display {
+    width: 100%;
+    height: 50px;
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-align: right;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+  }
+
+  .mem-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .mem-bar button {
+    flex: 1;
+    margin: 2px;
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    background: #4a90e2;
+    color: white;
+    cursor: pointer;
+  }
+
+  .btn-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  button {
+    padding: 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .btn-op {
+    background: #5ac8fa;
+  }
+
+  .btn-clear {
+    background: #ff6b6b;
+    grid-column: span 2;
+  }
+
+  .span2 {
+    grid-column: span 2;
+  }
+
+  button:hover {
+    opacity: 0.8;
+  }
+
+  #mem-display {
+    color: white;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+</style>
 </head>
+
 <body>
-    <div class="calculator">
-        <!-- Display area -->
-        <div class="display-wrap">
-            <div id="type-label">number</div>
-            <div id="history-line"></div>
-            <div id="screen">0</div>
-        </div>
 
-        <!-- Memory bar -->
-        <div class="mem-bar">
-            <button onclick="memStore()">M+</button>
-            <button onclick="memRecall()">MR</button>
-            <button onclick="memClear()">MC</button>
-            <span id="mem-display">Memory: empty</span>
-        </div>
+<div class="calculator">
 
-        <!-- Button grid -->
-        <div class="btn-grid">
-            <button class="btn-clear span2" onclick="clearAll()">AC</button>
-            <button class="btn-op" onclick="setOp('%')">%</button>
-            <button class="btn-op" onclick="setOp('/')">÷</button>
+  <input type="text" id="display" disabled>
 
-            <button onclick="pressNum('7')">7</button>
-            <button onclick="pressNum('8')">8</button>
-            <button onclick="pressNum('9')">9</button>
-            <button class="btn-op" onclick="setOp('*')">×</button>
+  <div class="mem-bar">
+    <button onclick="memStore()">M+</button>
+    <button onclick="memRecall()">MR</button>
+    <button onclick="memClear()">MC</button>
+  </div>
 
-            <button onclick="pressNum('4')">4</button>
-            <button onclick="pressNum('5')">5</button>
-            <button onclick="pressNum('6')">6</button>
-            <button class="btn-op" onclick="setOp('-')">−</button>
+  <div id="mem-display">Memory: empty</div>
 
-            <button onclick="pressNum('1')">1</button>
-            <button onclick="pressNum('2')">2</button>
-            <button onclick="pressNum('3')">3</button>
-            <button class="btn-op" onclick="setOp('+')">+</button>
+  <div class="btn-grid">
+    <button class="btn-clear" onclick="clearAll()">AC</button>
+    <button class="btn-op" onclick="pressOp('%')">%</button>
+    <button class="btn-op" onclick="pressOp('/')">÷</button>
 
-            <button onclick="pressNum('0')" class="span2">0</button>
-            <button onclick="pressDot()">.</button>
-            <button class="btn-eq" onclick="calculate()">=</button>
-        </div>
-    </div>
+    <button onclick="pressNum('7')">7</button>
+    <button onclick="pressNum('8')">8</button>
+    <button onclick="pressNum('9')">9</button>
+    <button class="btn-op" onclick="pressOp('*')">×</button>
 
-    <!-- History log -->
-    <div class="history-wrap">
-        <h3>History</h3>
-        <ul id="history-list"></ul>
-    </div>
+    <button onclick="pressNum('4')">4</button>
+    <button onclick="pressNum('5')">5</button>
+    <button onclick="pressNum('6')">6</button>
+    <button class="btn-op" onclick="pressOp('-')">−</button>
 
-    <script src="script.js"></script>
+    <button onclick="pressNum('1')">1</button>
+    <button onclick="pressNum('2')">2</button>
+    <button onclick="pressNum('3')">3</button>
+    <button class="btn-op" onclick="pressOp('+')">+</button>
+
+    <button class="span2" onclick="pressNum('0')">0</button>
+    <button onclick="pressNum('.')">.</button>
+    <button class="btn-op" onclick="calculate()">=</button>
+  </div>
+
+</div>
+
+<script>
+let display = document.getElementById("display");
+let current = "";
+let memory = 0;
+
+function pressNum(num) {
+  current += num;
+  display.value = current;
+}
+
+function pressOp(op) {
+  current += op;
+  display.value = current;
+}
+
+function clearAll() {
+  current = "";
+  display.value = "";
+}
+
+function calculate() {
+  try {
+    current = eval(current).toString();
+    display.value = current;
+  } catch {
+    display.value = "Error";
+  }
+}
+
+// Memory functions
+function memStore() {
+  memory += Number(display.value || 0);
+  document.getElementById("mem-display").innerText = "Memory: " + memory;
+}
+
+function memRecall() {
+  display.value = memory;
+}
+
+function memClear() {
+  memory = 0;
+  document.getElementById("mem-display").innerText = "Memory: empty";
+}
+</script>
+
 </body>
 </html>
