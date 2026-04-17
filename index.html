@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JS Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculator">
+        <!-- Display area -->
+        <div class="display-wrap">
+            <div id="type-label">number</div>
+            <div id="history-line"></div>
+            <div id="screen">0</div>
+        </div>
+
+        <!-- Memory bar -->
+        <div class="mem-bar">
+            <button onclick="memStore()">M+</button>
+            <button onclick="memRecall()">MR</button>
+            <button onclick="memClear()">MC</button>
+            <span id="mem-display">Memory: empty</span>
+        </div>
+
+        <!-- Button grid -->
+        <div class="btn-grid">
+            <button class="btn-clear span2" onclick="clearAll()">AC</button>
+            <button class="btn-op" onclick="setOp('%')">%</button>
+            <button class="btn-op" onclick="setOp('/')">÷</button>
+
+            <button onclick="pressNum('7')">7</button>
+            <button onclick="pressNum('8')">8</button>
+            <button onclick="pressNum('9')">9</button>
+            <button class="btn-op" onclick="setOp('*')">×</button>
+
+            <button onclick="pressNum('4')">4</button>
+            <button onclick="pressNum('5')">5</button>
+            <button onclick="pressNum('6')">6</button>
+            <button class="btn-op" onclick="setOp('-')">−</button>
+
+            <button onclick="pressNum('1')">1</button>
+            <button onclick="pressNum('2')">2</button>
+            <button onclick="pressNum('3')">3</button>
+            <button class="btn-op" onclick="setOp('+')">+</button>
+
+            <button onclick="pressNum('0')" class="span2">0</button>
+            <button onclick="pressDot()">.</button>
+            <button class="btn-eq" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <!-- History log -->
+    <div class="history-wrap">
+        <h3>History</h3>
+        <ul id="history-list"></ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
