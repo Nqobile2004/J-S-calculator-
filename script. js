@@ -1,144 +1,48 @@
-// ■■ STATE VARIABLES ■■ 
-// string - what is currently shown on the screen
-let currentInput = "0";
-
-// number - the first operand, stored after an operator is pressed
-let storedValue = null;
-
-// null / string - which operator was last pressed (+ - * / %)
-let operator = null;
-
-// boolean - did we just press = ? (next digit should clear screen)
-let justCalculated = false;
-
-// array - every completed calculation lives here
-const history = []; // starts empty
-
-// object - the memory slot (M+ saves here, MR reads it)
-const memory = {
-  value: 0, // number
-  active: false // boolean - is something stored?
-};
-
-// ■■ DOM HOOKS ■■ 
-const screen = document.getElementById('screen');
-const typeLabel = document.getElementById('type-label');
-const historyLine = document.getElementById('history-line');
-const historyList = document.getElementById('history-list');
-const memDisplay = document.getElementById('mem-display');
-
-// ■■ DATA TYPE INSPECTOR ■■ 
-function updateTypeInspector(value) {
-  typeLabel.textContent = typeof value;
-}
-
-// ■■ UPDATE SCREEN ■■ 
-function updateScreen() {
-  screen.textContent = currentInput;
-  updateTypeInspector(currentInput); // usually "string"
-}
-
-// ■■ NUMBER BUTTONS: 0-9 ■■ 
-function pressNum(num) {
-  if (currentInput === "0" || justCalculated) {
-    currentInput = num;
-    justCalculated = false;
-  } else {
-    currentInput += num; // string concatenation
-  }
-  updateScreen();
-}
-
-// ■■ DECIMAL POINT ■■ 
-function pressDot() {
-  if (justCalculated) {
-    currentInput = "0";
-    justCalculated = false;
-  }
-  if (!currentInput.includes('.')) {
-    currentInput += '.';
-  }
-  updateScreen();
-}
-
-// ■■ OPERATOR BUTTONS: + - * / % ■■ 
-function setOp(op) {
-  if (operator !== null && !justCalculated) {
-    calculate();
-  }
-  storedValue = parseFloat(currentInput); // convert string to number
-  operator = op; // string or null
-  historyLine.textContent = `${storedValue} ${operator}`;
-  justCalculated = true;
-  updateTypeInspector(storedValue); // shows "number"
-}
-
-// ■■ EQUALS BUTTON ■■ 
-function calculate() {
-  if (operator === null || storedValue === null) return;
-  
-  const current = parseFloat(currentInput); // number
-  let result; // number
-  
-  if (operator === '+') result = storedValue + current;
-  if (operator === '-') result = storedValue - current;
-  if (operator === '*') result = storedValue * current;
-  if (operator === '/') result = storedValue / current;
-  if (operator === '%') result = storedValue % current;
-  
-  // Add to history array
-  const calculation = `${storedValue} ${operator} ${current} = ${result}`;
-  history.push(calculation); // array method
-  
-  // Update history log on page
-  const li = document.createElement('li');
-  li.textContent = calculation;
-  historyList.prepend(li);
-  
-  historyLine.textContent = '';
-  currentInput = String(result); // convert number back to string
-  operator = null;
-  storedValue = null;
-  justCalculated = true;
-  updateScreen();
-  updateTypeInspector(result); // shows "number"
-}
-
-// ■■ CLEAR BUTTON ■■ 
-function clearAll() {
-  currentInput = "0";
-  storedValue = null; // null
-  operator = null; // null
-  historyLine.textContent = '';
-  justCalculated = false; // boolean
-  updateScreen();
-}
-
-// ■■ MEMORY: M+ ■■ 
-function memStore() {
-  memory.value = parseFloat(currentInput); // number
-  memory.active = true; // boolean
-  memDisplay.textContent = `Memory: ${memory.value}`;
-  updateTypeInspector(memory); // shows "object"
-}
-
-// ■■ MEMORY: MR ■■ 
-function memRecall() {
-  if (memory.active) {
-    currentInput = String(memory.value); // number to string
-    justCalculated = false;
-    updateScreen();
-  }
-}
-
-// ■■ MEMORY: MC ■■ 
-function memClear() {
-  memory.value = 0; // number
-  memory.active = false; // boolean
-  memDisplay.textContent = 'Memory: empty';
-  updateTypeInspector(null); // JS quirk: typeof null is "object"
-}
-
-// Initialize on load
-updateScreen();
-updateTypeInspector(currentInput);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JS Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculator">
+        <div class="display-wrap">
+            <div id="type-label">number</div>
+            <div id="history-line"></div>
+            <div id="screen">0</div>
+        </div>
+        <div class="mem-bar">
+            <button onclick="memStore()">M+</button>
+            <button onclick="memRecall()">MR</button>
+            <button onclick="memClear()">MC</button>
+            <span id="mem-display">Memory: empty</span>
+        </div>
+        <div class="btn-grid">
+            <button class="btn-clear span2" onclick="clearAll()">AC</button>
+            <button class="btn-op" onclick="setOp('%')">%</button>
+            <button class="btn-op" onclick="setOp('/')">÷</button>
+            <button onclick="pressNum('7')">7</button>
+            <button onclick="pressNum('8')">8</button>
+            <button onclick="pressNum('9')">9</button>
+            <button class="btn-op" onclick="setOp('*')">×</button>
+            <button onclick="pressNum('4')">4</button>
+            <button onclick="pressNum('5')">5</button>
+            <button onclick="pressNum('6')">6</button>
+            <button class="btn-op" onclick="setOp('-')">−</button>
+            <button onclick="pressNum('1')">1</button>
+            <button onclick="pressNum('2')">2</button>
+            <button onclick="pressNum('3')">3</button>
+            <button class="btn-op" onclick="setOp('+')">+</button>
+            <button onclick="pressNum('0')" class="span2">0</button>
+            <button onclick="pressDot()">.</button>
+            <button class="btn-eq" onclick="calculate()">=</button>
+        </div>
+    </div>
+    <div class="history-wrap">
+        <h3>History</h3>
+        <ul id="history-list"></ul>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
