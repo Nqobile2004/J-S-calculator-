@@ -40,7 +40,7 @@ function setOp(op) {
   if (operator !== null && !justCalculated) calculate();
   storedValue = parseFloat(currentInput);
   operator = op;
-  document.getElementById('history-line').textContent = `${storedValue} ${operator}`;
+  document.getElementById('history-line').textContent = storedValue + " " + operator;
   currentInput = "0";
   justCalculated = false;
   updateDisplay();
@@ -55,7 +55,7 @@ function calculate() {
   if (operator === '*') result = storedValue * current;
   if (operator === '/') result = storedValue / current;
   if (operator === '%') result = storedValue % current;
-  const entry = `${storedValue} ${operator} ${current} = ${result}`;
+  const entry = storedValue + " " + operator + " " + current + " = " + result;
   history.push(entry);
   addHistoryItem(entry);
   document.getElementById('history-line').textContent = '';
@@ -78,7 +78,7 @@ function clearAll() {
 function memStore() {
   memory.value = parseFloat(currentInput);
   memory.active = true;
-  document.getElementById('mem-display').textContent = `Memory: ${memory.value}`;
+  document.getElementById('mem-display').textContent = "Memory: " + memory.value;
 }
 
 function memRecall() {
